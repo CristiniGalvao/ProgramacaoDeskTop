@@ -19,6 +19,7 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
     private AlunoDAO alunoDao = new AlunoDAO();
     public ViewCadastroAluno() {
         initComponents();
+        atualizaGrid();
     }
     public void atualizaGrid(){
         try{
@@ -41,6 +42,12 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
             
         }
     }
+    public void limparCampo(){
+        tfRA.setText(" ");
+        tfNome.setText(" ");
+        ftfDTNasc.setText(" ");
+    }
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -223,7 +230,7 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao salvar aluno,solicite suporte técnico!","ERRO",JOptionPane.ERROR_MESSAGE);
         }
         atualizaGrid();
-        
+        limparCampo();
     }//GEN-LAST:event_btSalvarActionPerformed
 
     private void btPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPesquisarActionPerformed
