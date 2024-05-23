@@ -3,10 +3,11 @@ view\ViewCadastroAluno$4.class
 view\ViewCadastroAluno$2.class
 view\ViewPrincipal.class
 com\mycompany\unipardigital\UniparDigital.class
-conexaoBD\ConexaoPostgres.class
 view\ViewPrincipal$1.class
-dao\AlunoDAO.class
 modelo\Aluno.class
+view\ViewCadastroAluno$5.class
 view\ViewCadastroAluno.class
-dao\GenericDAO.class
 view\ViewCadastroAluno$1.class
+conexaoBD\ConexaoPostgres.class
+dao\AlunoDAO.class
+dao\GenericDAO.class

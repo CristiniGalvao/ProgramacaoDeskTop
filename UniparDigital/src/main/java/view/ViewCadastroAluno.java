@@ -7,6 +7,8 @@ package view;
 import dao.AlunoDAO;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import modelo.Aluno;
 
@@ -17,6 +19,9 @@ import modelo.Aluno;
 public class ViewCadastroAluno extends javax.swing.JFrame {
 
     private AlunoDAO alunoDao = new AlunoDAO();
+    private boolean alunoPesquisado;
+    private ArrayList<Aluno>lista;
+    
     public ViewCadastroAluno() {
         initComponents();
         atualizaGrid();
@@ -24,19 +29,37 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
     public void atualizaGrid(){
         try{
             String sql = "SELECT * FROM public.\"Aluno\" ORDER BY \"RA_ALUNO\";";
-            ArrayList<Aluno>lista = alunoDao.retornaLista(sql);
+            lista = new ArrayList<>();
+            lista = alunoDao.retornaLista(sql);
             
            //Manipulação da tabela
            tbAlunos.removeAll();
            
+           DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{},new String[]{"RA","Nome","Dt.Nascimento"}){
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+               
+           };
+           
            //Cria as colunas
-           tbAlunos.setModel(new DefaultTableModel(new Object[][]{},new String[]{"RA","Nome","Dt.Nascimento"}));
+           tbAlunos.setModel(tableModel);
            
            //Adiciona as linhas a tabela com os dados dos alunos
            DefaultTableModel dm = (DefaultTableModel)tbAlunos.getModel();
            for(Aluno aluno : lista){
                dm.addRow(new Object[]{aluno.getRaAluno(),aluno.getNomeAluno(),aluno.getDtNascAluno()});
            }
+           
+           tbAlunos.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               int linhaSelecionada = tbAlunos.getSelectedRow();
+               if(linhaSelecionada != -1)
+                   mostrarAluno(lista.get(linhaSelecionada));
+           }
+        });
            
         }catch(Exception ex){
             
@@ -46,6 +69,16 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
         tfRA.setText(" ");
         tfNome.setText(" ");
         ftfDTNasc.setText(" ");
+        tfRA.setEditable(true);
+        btSalvar.setEnabled(true);
+    }
+    private void mostrarAluno(Aluno aluno){
+        tfRA.setText(String.valueOf(aluno.getRaAluno()));
+        tfNome.setText(aluno.getNomeAluno());
+        ftfDTNasc.setText(aluno.getDtNascAluno());
+        tfRA.setEditable(false);
+        btSalvar.setEnabled(false);
+        alunoPesquisado = true;
     }
         
     /**
@@ -70,6 +103,14 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
         btSalvar = new javax.swing.JButton();
         btPesquisar = new javax.swing.JButton();
         ftfDTNasc = new javax.swing.JFormattedTextField();
+        lblogradouro = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        tflogradouro = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbAlunos = new javax.swing.JTable();
 
@@ -84,8 +125,10 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
         lbRA.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lbRA.setText("R.A:");
 
+        lbNome.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lbNome.setText("Nome:");
 
+        lbNasc.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lbNasc.setText("Data Nascimento:");
 
         btAtualizar.setText("Atualizar");
@@ -118,36 +161,70 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
 
         ftfDTNasc.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
 
+        lblogradouro.setText("Logradouro");
+
+        jLabel2.setText("Localidade");
+
+        jLabel3.setText("Bairro");
+
+        tflogradouro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tflogradouroActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("jLabel1");
+
+        jTextField1.setText("jTextField1");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tfRA, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbRA, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbNome))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(lbNasc)
-                                .addGap(0, 32, Short.MAX_VALUE))
-                            .addComponent(ftfDTNasc)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 79, Short.MAX_VALUE)
                         .addComponent(btPesquisar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btSalvar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btAtualizar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemover)))
+                        .addComponent(btRemover))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lbRA, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(48, 48, 48)
+                                        .addComponent(lbNome))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(tfRA, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                                            .addComponent(lblogradouro)
+                                            .addComponent(tflogradouro))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jLabel2)
+                                            .addComponent(tfNome, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                                            .addComponent(jTextField2))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ftfDTNasc, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lbNasc)
+                                            .addComponent(jLabel3))
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jTextField3)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -158,12 +235,26 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
                     .addComponent(lbRA)
                     .addComponent(lbNome)
                     .addComponent(lbNasc))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ftfDTNasc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfRA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfRA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftfDTNasc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(lblogradouro))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tflogradouro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemover)
                     .addComponent(btSalvar)
@@ -202,8 +293,8 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
                 .addComponent(lbTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -211,11 +302,35 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverActionPerformed
-        // TODO add your handling code here:
+        if(alunoPesquisado){
+            alunoDao.delete(Integer.parseInt(tfRA.getText()), "Aluno", "RA_ALUNO");
+            JOptionPane.showMessageDialog(this, "Aluno removido com sucesso!");
+            limparCampo();
+            atualizaGrid();
+        }else{
+            JOptionPane.showMessageDialog(this, "Selecione um aluno para remover","Atenção",JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btRemoverActionPerformed
 
     private void btAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAtualizarActionPerformed
-        // TODO add your handling code here:
+        if(alunoPesquisado){
+            
+            Aluno aluno = new Aluno();
+            aluno.setRaAluno(Integer.parseInt(tfRA.getText()));
+            aluno.setNomeAluno(tfNome.getText());
+            aluno.setDtNascAluno(ftfDTNasc.getText());
+            
+            if(alunoDao.atualizar(aluno)){
+                JOptionPane.showMessageDialog(this, "Aluno atualizado com sucesso!");
+                limparCampo();
+                atualizaGrid();
+            }else{
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar o aluno, Solicite suporte técnico","Erro",JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+                JOptionPane.showMessageDialog(this, "Selecione um aluno para atualizar","Atenção",JOptionPane.WARNING_MESSAGE);
+            }
+        
     }//GEN-LAST:event_btAtualizarActionPerformed
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
@@ -237,6 +352,10 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btPesquisarActionPerformed
 
+    private void tflogradouroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tflogradouroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tflogradouroActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -248,15 +367,23 @@ public class ViewCadastroAluno extends javax.swing.JFrame {
     private javax.swing.JButton btRemover;
     private javax.swing.JButton btSalvar;
     private javax.swing.JFormattedTextField ftfDTNasc;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel lbNasc;
     private javax.swing.JLabel lbNome;
     private javax.swing.JLabel lbRA;
     private javax.swing.JLabel lbTitulo;
+    private javax.swing.JLabel lblogradouro;
     private javax.swing.JTable tbAlunos;
     private javax.swing.JTextField tfNome;
     private javax.swing.JTextField tfRA;
+    private javax.swing.JTextField tflogradouro;
     // End of variables declaration//GEN-END:variables
 }
